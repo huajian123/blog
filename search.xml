@@ -8,7 +8,7 @@
   <entry>
     <title><![CDATA[【Angular】环境搭建]]></title>
     <url>%2Fblog%2F2019%2F04%2F07%2FngEnvironment%2F</url>
-    <content type="text"><![CDATA[安装NVM如果已经安装好了Node，建议先卸载 在下载页面中选择nvm-setup.zip进行下载点击进入下载页面 下载完成后只有新建一个nodejs文件夹，用来映射当前使用的node 安装完成以后使用nvm -v 来查看安装的版本如果能看到版本号，表示安装成功小华测试一下啊啊啊呵呵测试2 键入命令1$ nvm list available 查看可安装的node版本，通过nvm install node版本号来安装node 需要关注的博客 安装Nodeangular-cli]]></content>
+    <content type="text"><![CDATA[安装NVM如果已经安装好了Node，建议先卸载 在下载页面中选择nvm-setup.zip进行下载点击进入下载页面 下载完成后只有新建一个nodejs文件夹，用来映射当前使用的node 安装完成以后使用nvm -v 来查看安装的版本如果能看到版本号，表示安装成功 键入命令1$ nvm list available 查看可安装的node版本，通过nvm install node版本号来安装node 华舰啊啊啊 需要关注的博客 安装Nodeangular-cli]]></content>
       <categories>
         <category>Angular</category>
       </categories>
