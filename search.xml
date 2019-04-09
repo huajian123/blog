@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[【Angular】性能优化]]></title>
+    <url>%2Fblog%2F2019%2F04%2F07%2FngPerformanceFaster%2F</url>
+    <content type="text"><![CDATA[注册服务在根一级提供服务，Angular会创建一个单一，共享的实例，并且在 @Injectable 元数据中注册提供商的方式还让 Angular 能够通过移除那些从未被用过的服务来优化大小。123@Injectable(&#123; providedIn: 'root',&#125;)]]></content>
+      <categories>
+        <category>Angular</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[【Angular】环境搭建]]></title>
-    <url>%2Fblog%2F2019%2F04%2F07%2FngEnvironment%2F</url>
+    <url>%2Fblog%2F2019%2F04%2F01%2FngEnvironment%2F</url>
     <content type="text"><![CDATA[安装NVM如果已经安装好了Node，建议先卸载 在下载页面中选择nvm-setup.zip进行下载点击进入下载页面 下载完成后之后新建一个nodejs文件夹，用来映射当前使用的node 安装完成以后使用nvm -v 来查看安装的版本如果能看到版本号，表示安装成功 键入命令1$ nvm list available 查看可安装的node版本，通过nvm install node版本号来安装node 安装Node举个例子1$ nvm install 10.15.0 安装angular-cli这里安装的是最新版本的angular-cli，如果想指定版本就要在后面加上@版本号1$ npm install -g @angular/cli 验证版本1$ ng version 安装typescript1$ npm install -g typescript 验证版本1$ tsc -v 创建项目命令行进入指定的目录,这里是自动安装依赖，如果想跳过安装依赖的过程，请加上参数–skip-install1$ ng new (项目名) 启动项目1$ ng serve]]></content>
       <categories>
         <category>Angular</category>
