@@ -74,7 +74,7 @@
     version: '7.1.0',
     sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
     back2top: true,
-    back2top_sidebar: false,
+    back2top_sidebar: true,
     fancybox: false,
     fastclick: false,
     lazyload: false,
@@ -454,19 +454,6 @@
           
             
             
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/blog/2019/04/01/ngEnvironment/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/blog/2019/04/01/ngEnvironment/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -524,11 +511,21 @@
 
     
 
+    <div>
+      
+        
+<div style="text-align:center;color: #ccc;font-size:14px;">
+------文章结束，感谢您的阅读！<i class="fa fa-paw"></i>  ------</div>
+
+
+      
+    </div>
+
     <footer class="post-footer">
       
         <div class="post-tags">
           
-            <a href="/blog/tags/Angular/" rel="tag"># Angular</a>
+            <a href="/blog/tags/Angular/" rel="tag"><i class="fa fa-tag"></i> Angular</a>
           
         </div>
       
@@ -570,10 +567,6 @@
 
           </div>
           
-
-  
-    <div class="comments" id="comments">
-    </div>
 
   
 
@@ -727,6 +720,13 @@
       
 
       
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
 
     </div>
   </aside>
@@ -771,11 +771,6 @@
       </div>
     </footer>
 
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
     
 
     
@@ -866,36 +861,6 @@
   
 
   
-  
-
-<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
-
-
-
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-
-<script>
-  var GUEST = ['nick', 'mail', 'link'];
-  var guest = 'nick,mail,link';
-  guest = guest.split(',').filter(function(item) {
-    return GUEST.indexOf(item) > -1;
-  });
-  new Valine({
-    el: '#comments',
-    verify: false,
-    notify: false,
-    appId: 'VuhVVahGMYWTCOmJnUpfVvTX-gzGzoHsz',
-    appKey: 'owDAscIf7o7hlKOjytIxtwuL',
-    placeholder: 'Just go go',
-    avatar: 'mm',
-    meta: guest,
-    pageSize: '10' || 10,
-    visitor: false,
-    lang: 'zh-Hans' || 'zh-cn'
-  });
-</script>
-
-
 
 
   
