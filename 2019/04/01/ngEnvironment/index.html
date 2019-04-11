@@ -101,7 +101,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Angular】环境搭建">
 <meta property="og:url" content="https://huajian123.github.io/blog/2019/04/01/ngEnvironment/index.html">
-<meta property="og:site_name" content="华舰的小站">
+<meta property="og:site_name" content="小华的小站">
 <meta property="og:description" content="安装NVM如果已经安装好了Node，建议先卸载 在下载页面中选择nvm-setup.zip进行下载点击进入下载页面 下载完成后之后新建一个nodejs文件夹，用来映射当前使用的node  安装完成以后使用nvm -v 来查看安装的版本如果能看到版本号，表示安装成功 键入命令1$  nvm list available 查看可安装的node版本，通过nvm install node版本号来安装nod">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://huajian123.github.io/blog/2019/04/01/ngEnvironment/nvm-setup.png">
@@ -127,7 +127,7 @@
   };
 </script>
 
-  <title>【Angular】环境搭建 | 华舰的小站</title>
+  <title>【Angular】环境搭建 | 小华的小站</title>
   
 
 
@@ -186,7 +186,7 @@
     <div class="custom-logo-site-title">
       <a href="/blog/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">华舰的小站</span>
+        <span class="site-title">小华的小站</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -375,7 +375,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="华舰的小站">
+      <meta itemprop="name" content="小华的小站">
     </span>
 
     
@@ -453,6 +453,19 @@
 
           
             
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/blog/2019/04/01/ngEnvironment/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/blog/2019/04/01/ngEnvironment/" itemprop="commentCount"></span>
+                </a>
+              </span>
             
           
 
@@ -559,6 +572,10 @@
           
 
   
+    <div class="comments" id="comments">
+    </div>
+
+  
 
 
 
@@ -663,15 +680,19 @@
 
           
           
-            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
               <div class="links-of-blogroll-title">
                 <i class="fa  fa-fw fa-link"></i>
-                小哥博客
+                推荐博客
               </div>
               <ul class="links-of-blogroll-list">
                 
                   <li class="links-of-blogroll-item">
-                    <a href="https://wellwind.idv.tw/blog/" title="https://wellwind.idv.tw/blog/" rel="noopener" target="_blank">Title</a>
+                    <a href="https://wellwind.idv.tw/blog/" title="https://wellwind.idv.tw/blog/" rel="noopener" target="_blank">小哥博客</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://chenylz.github.io/" title="https://chenylz.github.io/" rel="noopener" target="_blank">小陈博客</a>
                   </li>
                 
               </ul>
@@ -845,6 +866,36 @@
   
 
   
+  
+
+<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
+
+
+
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+<script>
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'VuhVVahGMYWTCOmJnUpfVvTX-gzGzoHsz',
+    appKey: 'owDAscIf7o7hlKOjytIxtwuL',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-Hans' || 'zh-cn'
+  });
+</script>
+
+
 
 
   
