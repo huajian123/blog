@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="小华的小站">
 <meta property="og:description" content="注册服务在根一级提供服务，Angular会创建一个单一，共享的实例，并且在 @Injectable 元数据中注册提供商的方式还让 Angular 能够通过移除那些从未被用过的服务来优化大小。123@Injectable(&amp;#123;  providedIn: &apos;root&apos;,&amp;#125;) 模版表达式应该快速结束Angular在每个变更检测周期结束后执行模版表达式。变更检测周期会被多种异步活动触发，">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-04-11T01:00:38.162Z">
+<meta property="og:updated_time" content="2019-04-11T14:28:44.292Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Angular】性能优化">
 <meta name="twitter:description" content="注册服务在根一级提供服务，Angular会创建一个单一，共享的实例，并且在 @Injectable 元数据中注册提供商的方式还让 Angular 能够通过移除那些从未被用过的服务来优化大小。123@Injectable(&amp;#123;  providedIn: &apos;root&apos;,&amp;#125;) 模版表达式应该快速结束Angular在每个变更检测周期结束后执行模版表达式。变更检测周期会被多种异步活动触发，">
@@ -424,7 +424,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-11 09:00:38" itemprop="dateModified" datetime="2019-04-11T09:00:38+08:00">2019-04-11</time>
+                <time title="修改时间：2019-04-11 22:28:44" itemprop="dateModified" datetime="2019-04-11T22:28:44+08:00">2019-04-11</time>
               
             
           </span>
@@ -480,6 +480,10 @@
 <h2 id="模版表达式应该快速结束"><a href="#模版表达式应该快速结束" class="headerlink" title="模版表达式应该快速结束"></a>模版表达式应该快速结束</h2><p>Angular在每个变更检测周期结束后执行<br>模版表达式。变更检测周期会被多种异步活动触发，如Promise解析，Http返回结果，<br>定时器时间，按键或鼠标移动等。<br>所以模版表达式应该快速结束。</p>
 <h2 id="隐藏元素"><a href="#隐藏元素" class="headerlink" title="隐藏元素"></a>隐藏元素</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- isSpecial is <span class="literal">true</span> --&gt;</span><br><span class="line">&lt;div [class.hidden]=<span class="string">"!isSpecial"</span>&gt;Show with class&lt;/div&gt;</span><br><span class="line">&lt;div [class.hidden]=<span class="string">"isSpecial"</span>&gt;Hide with class&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- HeroDetail is <span class="keyword">in</span> the DOM but hidden --&gt;</span><br><span class="line">&lt;app-hero-detail [class.hidden]=<span class="string">"isSpecial"</span>&gt;&lt;/app-hero-detail&gt;</span><br><span class="line"></span><br><span class="line">&lt;div [style.display]=<span class="string">"isSpecial ? 'block' : 'none'"</span>&gt;Show with style&lt;/div&gt;</span><br><span class="line">&lt;div [style.display]=<span class="string">"isSpecial ? 'none'  : 'block'"</span>&gt;Hide with style&lt;/div&gt;</span><br></pre></td></tr></table></figure>
 <p>如果通过以上代码来隐藏元素，子树中的组件及其状态仍然保留着。<br>即使对于不可见属性，Angular也会继续变更检测。子树可能占有相当可观的内存和运算资源。<br>应该使用ngIf来代替</p>
+<h2 id="ngFor"><a href="#ngFor" class="headerlink" title="*ngFor"></a>*ngFor</h2><p>ngFor有时候性能较差，特别是在大型列表中。 对一个条目的一丁点改动、移除或添加，都会导致级联的 DOM 操作。</p>
+<p>我们应该使用trackBy，往组件中添加一个方法，它会返回 NgFor应该追踪的值<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// ts中</span><br><span class="line">trackByHeroes(index: number, hero: Hero): number &#123; <span class="built_in">return</span> hero.id; &#125;</span><br><span class="line"></span><br><span class="line">//html中</span><br><span class="line">&lt;div *ngFor=<span class="string">"let hero of heroes; trackBy: trackByHeroes"</span>&gt;</span><br><span class="line">  (&#123;&#123;hero.id&#125;&#125;) &#123;&#123;hero.name&#125;&#125;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure></p>
+<p>如果没有 trackBy，这些列在改变引用时都会触发完全的 DOM 元素替换。</p>
+<p>有了 trackBy，则只有修改了 id 的列才会触发元素替换</p>
 
       
     </div>
@@ -535,6 +539,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/blog/2019/04/11/ngTempGrammar/" rel="prev" title="【Angular】模板语法">
+                【Angular】模板语法 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -605,7 +613,7 @@
                 
                   <a href="/blog/archives/">
                 
-                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -699,7 +707,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#注册服务"><span class="nav-number">1.</span> <span class="nav-text">注册服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模版表达式应该快速结束"><span class="nav-number">2.</span> <span class="nav-text">模版表达式应该快速结束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐藏元素"><span class="nav-number">3.</span> <span class="nav-text">隐藏元素</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#注册服务"><span class="nav-number">1.</span> <span class="nav-text">注册服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模版表达式应该快速结束"><span class="nav-number">2.</span> <span class="nav-text">模版表达式应该快速结束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐藏元素"><span class="nav-number">3.</span> <span class="nav-text">隐藏元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ngFor"><span class="nav-number">4.</span> <span class="nav-text">*ngFor</span></a></li></ol></div>
             
 
           </div>

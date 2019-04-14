@@ -1,9 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[【Angular】事件]]></title>
+    <url>%2Fblog%2F2019%2F04%2F11%2FngEvents%2F</url>
+    <content type="text"><![CDATA[事件 (input) (click) (keyup) 敲击键盘时 (keyup.enter) 敲击回车时 (blur) 失去焦点时触发]]></content>
+      <categories>
+        <category>Angular</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Angular】变更检测策略]]></title>
+    <url>%2Fblog%2F2019%2F04%2F11%2FngChangeDetection%2F</url>
+    <content type="text"><![CDATA[变更检测当导致绑定的值发生改变的事件都是异步发生的，那么这些异步发生的事件就会通知Angular,那么他就会检测到变化。有如下几种情况： 用户输入操作，如点击，提交等 请求服务端数据（XHR） 定时事件，setTimeout,setInterval 小栗子12&lt;input #box (keyup)="0"&gt;&lt;p&gt;&#123;&#123;box.value&#125;&#125;&lt;/p&gt; 在这个简单的模板中，使用(keyup)，做了异步事件，Angular才更新了绑定。虽然绑定到了0身上，但是满足了Angular变更检测的要求。 相关文章]]></content>
+      <categories>
+        <category>Angular</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Angular】模板语法]]></title>
+    <url>%2Fblog%2F2019%2F04%2F11%2FngTempGrammar%2F</url>
+    <content type="text"><![CDATA[安全导航操作符 ( ?. ) 和空属性路径Angular 的安全导航操作符 (?.) 是一种流畅而便利的方式，用来保护出现在属性路径中 null 和 undefined 值。 下例中，当 currentHero 为空时，保护视图渲染器，让它免于失败。1The current hero's name is &#123;&#123;currentHero?.name&#125;&#125; 还可以尝试通过 &amp;&amp; 来把属性路径的各部分串起来，让它在遇到第一个空值的时候，就返回空。 1The null hero's name is &#123;&#123;nullHero &amp;&amp; nullHero.name&#125;&#125; 但这样略显笨重 非空断言操作符（!）默认开启严格空值检查的情况下，TypeScript为了确保有类型的变量是不允许null或undefined值，如果有未赋值的变量，或者试图把 null 或 undefined 赋值给不允许为空的变量，类型检查器就会抛出一个错误。TS中非空断言符 Angular 模板中的非空断言操作符（!）也是同样的用途。1234&lt;!--No hero, no text --&gt;&lt;div *ngIf="hero"&gt; The hero's name is &#123;&#123;hero!.name&#125;&#125;&lt;/div&gt; 在 Angular 编译器把你的模板转换成 TypeScript 代码时，这个操作符会防止 TypeScript 报告 “hero.name 可能为 null 或 undefined”的错误。 与安全导航操作符不同的是，非空断言操作符不会防止出现 null 或 undefined。 它只是告诉 TypeScript 的类型检查器对特定的属性表达式，不做 “严格空值检测”。 类型转换函数$any有时候，绑定表达式可能会报类型错误，并且它不能或很难指定类型。要消除这种报错，你可以使用 $any 转换函数来把表达式转换成 any 类型。1234&lt;!-- Accessing an undeclared member --&gt;&lt;div&gt; The hero's marker is &#123;&#123;$any(hero).marker&#125;&#125;&lt;/div&gt; 在这个例子中，当 Angular 编译器把模板转换成 TypeScript 代码时，$any 表达式可以防止 TypeScript 编译器报错说 marker 不是 Hero 接口的成员。 $any 转换函数可以和 this 联合使用，以便访问组件中未声明过的成员。即可以跳过是否有某些成员属性的检查。1234&lt;!-- Accessing an undeclared member --&gt;&lt;div&gt; Undeclared members is &#123;&#123;$any(this).member&#125;&#125;&lt;/div&gt; $any 转换函数可以在绑定表达式中任何可以进行方法调用的地方使用。台湾博客1台湾博客2]]></content>
+      <categories>
+        <category>Angular</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[【Angular】性能优化]]></title>
     <url>%2Fblog%2F2019%2F04%2F07%2FngPerformanceFaster%2F</url>
-    <content type="text"><![CDATA[注册服务在根一级提供服务，Angular会创建一个单一，共享的实例，并且在 @Injectable 元数据中注册提供商的方式还让 Angular 能够通过移除那些从未被用过的服务来优化大小。123@Injectable(&#123; providedIn: 'root',&#125;) 模版表达式应该快速结束Angular在每个变更检测周期结束后执行模版表达式。变更检测周期会被多种异步活动触发，如Promise解析，Http返回结果，定时器时间，按键或鼠标移动等。所以模版表达式应该快速结束。 隐藏元素123456789&lt;!-- isSpecial is true --&gt;&lt;div [class.hidden]="!isSpecial"&gt;Show with class&lt;/div&gt;&lt;div [class.hidden]="isSpecial"&gt;Hide with class&lt;/div&gt;&lt;!-- HeroDetail is in the DOM but hidden --&gt;&lt;app-hero-detail [class.hidden]="isSpecial"&gt;&lt;/app-hero-detail&gt;&lt;div [style.display]="isSpecial ? 'block' : 'none'"&gt;Show with style&lt;/div&gt;&lt;div [style.display]="isSpecial ? 'none' : 'block'"&gt;Hide with style&lt;/div&gt; 如果通过以上代码来隐藏元素，子树中的组件及其状态仍然保留着。即使对于不可见属性，Angular也会继续变更检测。子树可能占有相当可观的内存和运算资源。应该使用ngIf来代替]]></content>
+    <content type="text"><![CDATA[注册服务在根一级提供服务，Angular会创建一个单一，共享的实例，并且在 @Injectable 元数据中注册提供商的方式还让 Angular 能够通过移除那些从未被用过的服务来优化大小。123@Injectable(&#123; providedIn: 'root',&#125;) 模版表达式应该快速结束Angular在每个变更检测周期结束后执行模版表达式。变更检测周期会被多种异步活动触发，如Promise解析，Http返回结果，定时器时间，按键或鼠标移动等。所以模版表达式应该快速结束。 隐藏元素123456789&lt;!-- isSpecial is true --&gt;&lt;div [class.hidden]="!isSpecial"&gt;Show with class&lt;/div&gt;&lt;div [class.hidden]="isSpecial"&gt;Hide with class&lt;/div&gt;&lt;!-- HeroDetail is in the DOM but hidden --&gt;&lt;app-hero-detail [class.hidden]="isSpecial"&gt;&lt;/app-hero-detail&gt;&lt;div [style.display]="isSpecial ? 'block' : 'none'"&gt;Show with style&lt;/div&gt;&lt;div [style.display]="isSpecial ? 'none' : 'block'"&gt;Hide with style&lt;/div&gt; 如果通过以上代码来隐藏元素，子树中的组件及其状态仍然保留着。即使对于不可见属性，Angular也会继续变更检测。子树可能占有相当可观的内存和运算资源。应该使用ngIf来代替 *ngForngFor有时候性能较差，特别是在大型列表中。 对一个条目的一丁点改动、移除或添加，都会导致级联的 DOM 操作。 我们应该使用trackBy，往组件中添加一个方法，它会返回 NgFor应该追踪的值1234567// ts中trackByHeroes(index: number, hero: Hero): number &#123; return hero.id; &#125;//html中&lt;div *ngFor="let hero of heroes; trackBy: trackByHeroes"&gt; (&#123;&#123;hero.id&#125;&#125;) &#123;&#123;hero.name&#125;&#125;&lt;/div&gt; 如果没有 trackBy，这些列在改变引用时都会触发完全的 DOM 元素替换。 有了 trackBy，则只有修改了 id 的列才会触发元素替换]]></content>
       <categories>
         <category>Angular</category>
       </categories>
