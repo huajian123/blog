@@ -1,6 +1,264 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[【Flutter】打包]]></title>
+    <url>%2Fblog%2F2019%2F05%2F04%2FflutterPackage%2F</url>
+    <content type="text"><![CDATA[app图标flutter_app\android\app\src\main\res\mipmap-mdpi 配置打包信息flutter_app\android\app\src\main\AndroidManifest.xml 这个文件中 android:label对应打包的app名称 android:icon对应图标名称 命令行运行keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key如果报错是因为没有设置指定的盘，则运行keytool -genkey -v -keystore e:/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key 用这条来生成，可以对比一下。此时e盘有一个key.jks文件 如果上面的命令找不到keytool这个工具，运行flutter doctor -v,找到命令行中Java binary at…,复制到bin目录例如E:\Program Files (x86)\AndroidStudio\jre\bin\java,则赋值到java前面的\(包含),则重新修改命令为E:\’Program Files (x86)’\AndroidStudio\jre\bin\keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key 在F:\projects\flutter_app\android\key.properties新建key.properties文件，赋值1234storePassword=&lt;password from previous step&gt;keyPassword=&lt;password from previous step&gt;keyAlias=keystoreFile=&lt;location of the key store file, e.g. /Users/&lt;user name&gt;/key.jks&gt; 举个例子1234storePassword=123123keyPassword=123123keyAlias=keystoreFile=E:/key.jks 在F:\projects\flutter_app\android\app\build.gradle这个文件中 在android这个属性上添加代码123def keystorePropertiesFile = rootProject.file("key.properties")def keystoreProperties = new Properties()keystoreProperties.load(new FileInputStream(keystorePropertiesFile)) 替换 1234567891011121314151617181920212223buildTypes &#123; release &#123; // TODO: Add your own signing config for the release build. // Signing with the debug keys for now, so `flutter run --release` works. signingConfig signingConfigs.debug &#125;&#125;为:signingConfigs &#123; release &#123; keyAlias keystoreProperties['keyAlias'] keyPassword keystoreProperties['keyPassword'] storeFile file(keystoreProperties['storeFile']) storePassword keystoreProperties['storePassword'] &#125;&#125;buildTypes &#123; release &#123; signingConfig signingConfigs.release &#125;&#125; 最后运行flutter build apk即可得到包的路径，在F:\projects\flutter_app\build\app\outputs\apk\release下面]]></content>
+      <categories>
+        <category>Flutter</category>
+      </categories>
+      <tags>
+        <tag>Flutter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Flutter】路由]]></title>
+    <url>%2Fblog%2F2019%2F05%2F03%2FflutterComponentRouter%2F</url>
+    <content type="text"><![CDATA[123456789101112131415161718192021222324252627282930313233343536373839404142434445import 'package:flutter/material.dart';void main() &#123; runApp(MaterialApp( title: "导航", home: new FirstPage(), ));&#125;class FirstPage extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; // TODO: implement build return Scaffold( appBar: AppBar( title: Text('导航'), ), body: Center( child: RaisedButton( child: Text('查看商品详情'), onPressed: () &#123; Navigator.push(context, MaterialPageRoute(builder: (context) =&gt; new SecondPage())); &#125;, ), ), ); &#125;&#125;class SecondPage extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; return Scaffold( appBar: AppBar(title: Text('详情页面'),), body: Center( child: RaisedButton(onPressed: () &#123; Navigator.pop(context); &#125;, child: Text('返回'),), ), ); return null; &#125;&#125; 路由传参1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859import 'package:flutter/material.dart';class Product &#123; final String title; final String description; Product(this.title, this.description);&#125;void main() &#123; runApp(MaterialApp( title: '导航数据参数和接收', home: ProductList( products: List.generate(20, (i) =&gt; Product('商品$i', '商品详情，编号 为$i'))), ));&#125;class ProductList extends StatelessWidget &#123; final List&lt;Product&gt; products; ProductList(&#123;Key key, @required this.products&#125;) : super(key: key); @override Widget build(BuildContext context) &#123; return Scaffold( appBar: AppBar( title: Text('商品列表'), ), body: ListView.builder( itemBuilder: (context, index) &#123; return ListTile( title: Text(products[index].title), onTap: () &#123; Navigator.push( context, MaterialPageRoute( builder: (context) =&gt; ProductDetail(product: products[index]))); &#125;, ); &#125;, itemCount: products.length, ), ); &#125;&#125;class ProductDetail extends StatelessWidget &#123; final Product product; ProductDetail(&#123;Key key, @required this.product&#125;) :super(key: key); @override Widget build(BuildContext context) &#123; return Scaffold( appBar: AppBar(title: Text('$&#123;product.title&#125;'),), body: Center(child: Text('$&#123;product.description&#125;'),), ); &#125;&#125; 路由传参数据返回12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667import 'package:flutter/material.dart';void main() &#123; runApp(MaterialApp( title: '导航数据参数和接收', home: FirstPage() ));&#125;class FirstPage extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; return Scaffold( appBar: AppBar(title: Text('测试路由传参带回'),), body: Center( child: RouteButton(), ), ); &#125;&#125;class RouteButton extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; return RaisedButton( onPressed: () &#123;_navigateToNewPage(context);&#125;, child: Text('详情页面'), ); &#125; _navigateToNewPage(BuildContext context) async&#123; final result = await Navigator.push(context, MaterialPageRoute(builder: (context) =&gt; NewPage())); Scaffold.of(context).showSnackBar(SnackBar(content: Text('$result'))); &#125;&#125;class NewPage extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; return Scaffold( appBar: AppBar( title: Text('新页面'), ), body: Center( child: Column( children: &lt;Widget&gt;[ RaisedButton( child: Text('数据1'), onPressed: ()&#123; Navigator.pop(context,'数据1'); &#125;, ), RaisedButton( child: Text('数据2'), onPressed: ()&#123; Navigator.pop(context,'数据2'); &#125;, ) ], ), ), ); &#125;&#125;]]></content>
+      <categories>
+        <category>Flutter</category>
+      </categories>
+      <tags>
+        <tag>Flutter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Flutter】布局]]></title>
+    <url>%2Fblog%2F2019%2F05%2F03%2FflutterLayout%2F</url>
+    <content type="text"><![CDATA[水平布局12345678910111213141516171819202122232425262728293031323334353637import 'package:flutter/material.dart';void main() =&gt; runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body: new Row( children: &lt;Widget&gt;[ new RaisedButton( onPressed: () &#123;&#125;, color: Colors.red, child: new Text('Button'), ), Expanded(child: new RaisedButton(//Expanded组件用来平均分配水平距离 onPressed: () &#123;&#125;, color: Colors.yellow, child: new Text('Button'), ),), new RaisedButton( onPressed: () &#123;&#125;, color: Colors.green, child: new Text('Button'), ), ], )), ); &#125;&#125; 垂直布局1234567891011121314151617181920212223242526272829import 'package:flutter/material.dart';void main() =&gt; runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body: Center(//表示整体居中 child: Column( crossAxisAlignment: CrossAxisAlignment.center,//对齐属性，相对于Column居中，也是相对于所有文字的Column的居中 mainAxisAlignment: MainAxisAlignment.center,//主轴设置对齐方式，这里是设置的Column，则主轴为垂直方向 children: &lt;Widget&gt;[ Text("I am huajian"), Expanded(child: Text("ceshi"),),//这里使用Expanded使用灵活的布局方式 Text("dibu"), ], ), ) ), ); &#125;&#125; 层叠布局(头像)1234567891011121314151617181920212223242526272829303132333435363738394041import 'package:flutter/material.dart';void main() =&gt; runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; var stack = new Stack( alignment: const FractionalOffset(0.5, 0.8),//层叠属性，给的值是x值和y值，最小是0，最大是1 children: &lt;Widget&gt;[ new CircleAvatar( //相当于圆形头像 backgroundImage: new NetworkImage( 'http://pic37.nipic.com/20140113/8800276_184927469000_2.png'), radius: 100.0, ), new Container( decoration: new BoxDecoration( color: Colors.green ), padding: EdgeInsets.all(5.0), child: Text("小华测试"), ), ], ); // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body:Center( child: stack, ) ), ); &#125;&#125; 类似于绝对定位组件(Positioned)123456789101112131415161718192021222324252627282930313233343536373839404142434445464748import 'package:flutter/material.dart';void main() =&gt; runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; var stack = new Stack( alignment: const FractionalOffset(0.5, 0.8), //层叠属性，给的值是x值和y值，最小是0，最大是1 children: &lt;Widget&gt;[ new CircleAvatar( //相当于圆形头像 backgroundImage: new NetworkImage( 'http://pic37.nipic.com/20140113/8800276_184927469000_2.png'), radius: 100.0, ), new Positioned( top: 10.0, left: 10.0, child: new Text('ceshi2'), ), new Positioned( top: 20.0, left: 10.0, child: new Text('ceshi3'), ), new Positioned( top: 10.0, left: 10.0, child: new Text('ceshi4'), ), ], ); // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body: Center( child: stack, )), ); &#125;&#125; 卡牌布局123456789101112131415161718192021222324252627282930313233343536373839404142434445import 'package:flutter/material.dart';void main() =&gt; runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; var card = new Card(//卡牌组件 child: Column(//垂直布局组件 children: &lt;Widget&gt;[ ListTile( title: Text('江苏南京孝陵卫',style: TextStyle(fontWeight: FontWeight.w500),), subtitle: Text('花间：15151515151'),//副标题 leading:new Icon(Icons.account_box,color: Colors.lightBlue,) , ), new Divider(),//分割线 ListTile( title: Text('江苏南京孝陵卫',style: TextStyle(fontWeight: FontWeight.w500),), subtitle: Text('花间：15151515151'),//副标题 leading:new Icon(Icons.account_box,color: Colors.lightBlue,) , ), new Divider(),//分割线 ListTile( title: Text('江苏南京孝陵卫',style: TextStyle(fontWeight: FontWeight.w500),), subtitle: Text('花间：15151515151'),//副标题 leading:new Icon(Icons.account_box,color: Colors.lightBlue,) , ), ], ), ); // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body: Center( child: card, )), ); &#125;&#125;]]></content>
+      <categories>
+        <category>Flutter</category>
+      </categories>
+      <tags>
+        <tag>Flutter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Flutter】List组件]]></title>
+    <url>%2Fblog%2F2019%2F05%2F02%2FflutterComponentList%2F</url>
+    <content type="text"><![CDATA[基本使用1234567891011121314151617181920212223242526272829303132333435363738import 'package:flutter/material.dart';void main() =&gt; runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body: new ListView( children: &lt;Widget&gt;[ new ListTile( leading: new Icon(Icons.filter_vintage), title: new Text('filter_vintage'), ), new ListTile( leading: new Icon(Icons.ac_unit), title: new Text('ac_unit'), ), new ListTile( leading: new Icon(Icons.accessibility_new), title: new Text('accessibility_new'), ), new Image.network( 'http://pic37.nipic.com/20140113/8800276_184927469000_2.png'), new Image.network( 'http://pic37.nipic.com/20140113/8800276_184927469000_2.png') ], )), ); &#125;&#125; 横向列表以及组件拆分12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152import 'package:flutter/material.dart';void main() =&gt; runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body: Center( child: Container( width: 200.0, height: 200.0, child: MyList(), ), ), ), ); &#125;&#125;class MyList extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; return new ListView( scrollDirection: Axis.horizontal, //横向,竖向是vertical children: &lt;Widget&gt;[ new Container( width: 180.0, color: Colors.blue, ), new Container( width: 180.0, color: Colors.pink, ), new Container( width: 180.0, color: Colors.cyanAccent, ), new Container( width: 180.0, color: Colors.blue, ) ], ); &#125;&#125; 动态加载列表12345678910111213141516171819202122232425262728293031323334import 'package:flutter/material.dart';void main() =&gt; //传递参数 runApp(MyApp( items: new List&lt;String&gt;.generate( 1000, (i)=&gt;"item $i") //声明数组 List(),List&lt;String&gt;(),[1,2.3] ));class MyApp extends StatelessWidget &#123; final List&lt;String&gt; items; MyApp(&#123;Key key, @required this.items&#125;) : super(key: key); @override Widget build(BuildContext context) &#123; // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body: new ListView.builder( itemCount: items.length, itemBuilder: (context, index) &#123; return new ListTile(title: new Text('$&#123;items[index]&#125;')); &#125;,//itemCount要生成多少条 ), ), ); &#125;&#125; 网格列表写法一1234567891011121314151617181920212223242526272829303132import 'package:flutter/material.dart';void main() =&gt; runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body:GridView.count(//网格列表 padding: const EdgeInsets.all(20.0), crossAxisSpacing: 10.0,// 网格的距离 crossAxisCount: 5,//一行显示多少咧 children: &lt;Widget&gt;[ const Text('huajianceshi'), const Text('huajianceshi'), const Text('huajianceshi'), const Text('huajianceshi'), const Text('huajianceshi'), ], ) ), ); &#125;&#125; 网格列表写法二123456789101112131415161718192021222324252627282930313233import 'package:flutter/material.dart';void main() =&gt; runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body:GridView( gridDelegate: SliverGridDelegateWithFixedCrossAxisCount( crossAxisCount: 4,//一行放几个 mainAxisSpacing: 8.0,//纵轴之间的间距 crossAxisSpacing:2.0,//横轴之间的间距 childAspectRatio: 1.2,//宽度和高度的比例 ), children: &lt;Widget&gt;[new Image.network("http://pic37.nipic.com/20140113/8800276_184927469000_2.png",fit: BoxFit.cover,), new Image.network("http://pic37.nipic.com/20140113/8800276_184927469000_2.png",fit: BoxFit.cover,), new Image.network("http://pic37.nipic.com/20140113/8800276_184927469000_2.png",fit: BoxFit.cover,), new Image.network("http://pic37.nipic.com/20140113/8800276_184927469000_2.png",fit: BoxFit.cover,), new Image.network("http://pic37.nipic.com/20140113/8800276_184927469000_2.png",fit: BoxFit.cover,), ], ) ), ); &#125;&#125;]]></content>
+      <categories>
+        <category>Flutter</category>
+      </categories>
+      <tags>
+        <tag>Flutter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Flutter】Img组件]]></title>
+    <url>%2Fblog%2F2019%2F05%2F02%2FflutterComponentImg%2F</url>
+    <content type="text"><![CDATA[12345678910111213141516171819202122232425262728293031323334import 'package:flutter/material.dart';void main() =&gt; runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body: Center( child: Container( child: new Image.network( 'http://pic37.nipic.com/20140113/8800276_184927469000_2.png', fit: BoxFit.fitWidth,//BoxFit.contain,保持原图比例，fill容器填满,fitWidth横向要充满容器,cover可能拉伸可能不变形，图片充满容器,scaleDown保持原图片大小 repeat: ImageRepeat.repeat,// 图片重复 // color: Colors.blueAccent, // colorBlendMode: BlendMode.darken,// 图片和颜色混合 ), //asset目录中放的图片，file手机上，本地的图片，network网络图片 width: 300.0, height: 200.0, color: Colors.blue, ), ), ), ); &#125;&#125; 引用项目中的图片这样添加会在打包时添加到包体里面，增大安装包体积 在项目根目录建立文件夹images,里面存放header.jpg pubspec.yaml文件中 assets里面添加 12assets: - images/head.jpg 添加代码 123456789101112import 'package:flutter/material.dart';void main()=&gt;runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; return Container( child: Image.asset('images/head.jpg'), ); &#125;&#125;]]></content>
+      <categories>
+        <category>Flutter</category>
+      </categories>
+      <tags>
+        <tag>Flutter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Flutter】Container组件]]></title>
+    <url>%2Fblog%2F2019%2F05%2F02%2FflutterComponentContainer%2F</url>
+    <content type="text"><![CDATA[12345678910111213141516171819202122232425262728293031323334import 'package:flutter/material.dart';void main() =&gt; runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body: Center( child: Container( child: new Text("华舰来搞一搞",style: TextStyle(fontSize: 40.0),), alignment:Alignment.topLeft ,//container里面子内容的对齐方式, width: 500.0, height: 400.0, // color: Colors.pink, padding: const EdgeInsets.all(40.0),// 边距，如果设置具体某个边距const EdgeInsets.fromLTRB(40.0,30.0,34.0,34.0) margin: const EdgeInsets.all(10.0), decoration:new BoxDecoration(//线性渐变 gradient: const LinearGradient(colors: [Colors.pink,Colors.amberAccent]), border: Border.all(width: 2.0,color: Colors.red)//边框 ) , ), ), ), ); &#125;&#125;]]></content>
+      <categories>
+        <category>Flutter</category>
+      </categories>
+      <tags>
+        <tag>Flutter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Flutter】Text组件]]></title>
+    <url>%2Fblog%2F2019%2F05%2F02%2FflutterComponentText%2F</url>
+    <content type="text"><![CDATA[Text组件123456789101112131415161718192021222324252627282930313233import 'package:flutter/material.dart';void main() =&gt; runApp(MyApp());class MyApp extends StatelessWidget &#123; @override Widget build(BuildContext context) &#123; // 传入上下文 return MaterialApp( title: "小华试试Flutter", home: Scaffold( // Scffold组件表示搭建内容 appBar: AppBar( title: Text("小华试水Flutter"), ), body: Center( child: Text( "HELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLDHELLO WORLD", textAlign: TextAlign.left,// 文本位置 maxLines: 2, overflow: TextOverflow.ellipsis,// fade值可以让文字下面有点隐藏的效果，ellipsis值是可以有省略号 style: TextStyle( fontSize: 25.0,//必须设置浮点数 color: Color.fromARGB(255, 255, 125, 125), decoration: TextDecoration.underline,//下划线 decorationStyle: TextDecorationStyle.solid//实线 ), ), ), ), ); &#125;&#125;]]></content>
+      <categories>
+        <category>Flutter</category>
+      </categories>
+      <tags>
+        <tag>Flutter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Dart】语法]]></title>
+    <url>%2Fblog%2F2019%2F05%2F02%2FdartPrograms%2F</url>
+    <content type="text"><![CDATA[函数1void main() =&gt; runApp()]]></content>
+      <categories>
+        <category>Flutter</category>
+        <category>Dart</category>
+      </categories>
+      <tags>
+        <tag>Flutter</tag>
+        <tag>Dart</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Flutter】安装]]></title>
+    <url>%2Fblog%2F2019%2F05%2F01%2FflutterSetUp%2F</url>
+    <content type="text"><![CDATA[翻墙弄 win7 64位以上。 git java 环境 下载flutter jdk 下载完后是一个压缩包，然后解压。 配置环境变量 C:\programs\flutter\bin 命令行中运行fultter doctor,会发现有很多感叹号 安装androidstudio链接 安装完成后打开，不要Start a new Android Studio project 点击Configure选择plugins,搜索flutter,会提示要安装dart，点击确认 CMD执行flutter doctor,执行命令flutter doctor –android-licenses 全部选y]]></content>
+      <categories>
+        <category>Flutter</category>
+      </categories>
+      <tags>
+        <tag>Flutter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【SpringBoot】jackson处理方法]]></title>
+    <url>%2Fblog%2F2019%2F05%2F01%2FspringBootReturnJson%2F</url>
+    <content type="text"><![CDATA[1234567891011121314151617181920212223241）age字段如果为空的时候就不返回给前端2）pwd 不返回给前端3）phone 用account别名来返回给前端4）日期格式化public class User &#123; @JsonInclude(JsonInclude.Include.NON_NULL) private int age; @JsonIgnore private String pwd; @JsonProperty(&quot;account&quot;) private String phone; @JsonFormat(pattern = &quot;yyyy-MM-dd hh:mm:ss&quot;,locale = &quot;zh&quot;,timezone = &quot;GMT+8&quot;) private Date createTime; public User(int age, String pwd, String phone, Date createTime) &#123; this.pwd = pwd; this.phone = phone; this.createTime = createTime; &#125; ..... &#125;]]></content>
+      <categories>
+        <category>Java</category>
+        <category>SpringBoot</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>SpringBoot</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【IDEA】快捷键]]></title>
+    <url>%2Fblog%2F2019%2F05%2F01%2FIDEA%2F</url>
+    <content type="text"><![CDATA[生成get,set alt+enter是一种用途广泛的操作，把光标放在一个没有get和set方法的私有成员变量上，按alt+enter就会弹出一个小窗 选择多个属性时，点击第一个然后按住shift键，再点击最后一个。或者ctrl+a全选，然后再把不应该选择的去掉。]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【CSS】格式化上下文]]></title>
+    <url>%2Fblog%2F2019%2F04%2F22%2FCssFormatContext%2F</url>
+    <content type="text"><![CDATA[相关资料]]></content>
+      <categories>
+        <category>CSS</category>
+      </categories>
+      <tags>
+        <tag>CSS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【CSS】选择符]]></title>
+    <url>%2Fblog%2F2019%2F04%2F20%2FCssChoose%2F</url>
+    <content type="text"><![CDATA[子选择符子选择符只选择一个元素的直接后代，也就是子选择符。1#nav&gt;li 相邻选择符1h2+p 选择位于某个元素后面，并与该元素拥有共同父元素的元素。 一般同辈组合子123h2 ~ p &#123; color: red; &#125; 选择h2后面所有的同辈的p元素 属性选择器1234567p[name]&#123; color: red; &#125; p[name=&quot;aaa&quot;]&#123; color: red; &#125; 选择所有有name属性的元素，也通过可以指定属性的值来选择其他一些变通： 匹配以某些字符串开头 1a[href^=&quot;http:&quot;] 匹配以某些字符串结尾 1img[src$=&quot;.jpg&quot;] 匹配包含某些字符的属性值 1a[href*=&quot;/about/&quot;] 匹配以空格分割的字符串中的属性值（比如rel属性的值） 1a[rel~=next] 选择开头是指定值或指定值后连着一个短下划线 1a[lang|=en] 伪元素 :first=letter文本第一个字符 :firlst-line文本第一行 :before :after内容开头或末尾处假象的元素，适合用来插入小图标及版面装饰符号。1234p:before&#123; content:&apos;“&apos;; font-size:15em;&#125; 注意应该避免用伪元素插入对交互有实质影响的内容。 伪类基于文档结构以外的情形来位页面添加样式，这时候就可以使用伪类。12345678/*未问过的链接*/ a:link&#123;color:blue&#125; /*访问过的链接*/ a:visited&#123;color:blue&#125; /*链接在鼠标悬停及获取键盘焦点时*/ a:hover,a:focus&#123;color:blue&#125; /*活动状态时*/ a:active&#123;color:blue&#125; :target伪类匹配的元素有一个ID属性，并且该属性的值出现在当前页面URL末尾的井号（#）后边。如打开http://example.com/blog/1/#comment-3找到页面的标记为…的评论那么就可以匹配一下规则来高亮显示123.comment:target&#123; background-color:red&#125; :not()选择符伪类123.comment:target:not(.comment-downvoted)&#123; background-color:red&#125; 结构化伪类 tr:nth-child(odd) 奇数odd,偶数even tr:nth-child(3) tr:nth-child(3n+4) tr:nth-child(-n+3) 只会选择前三个元素 :nth-last-child伪类，表示从最后一个元素倒数 :first-child===:nth-child(1) :last-child:nth-child(1) 选择最后一个子元素 div：nth-of-type（n） 第n个类型是div的子元素 :only-child选择的是父元素中只有一个子元素，而且只有唯一的一个子元素。也就是说，匹配的元素的父元素中仅有一个子元素，而且是一个唯一的子元素。12345678910111213141516&lt;div class=&quot;post&quot;&gt; &lt;p&gt;我是一个段落&lt;/p&gt; &lt;p&gt;我是一个段落&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;post&quot;&gt; &lt;p&gt;我是一个段落&lt;/p&gt;&lt;/div&gt;.post p &#123; background: green; color: #fff; padding: 10px;&#125;.post p:only-child &#123; background: orange;&#125; 表单伪类1&lt;input type=&quot;text&quot; name=&quot;aaa&quot; required&gt; input:required{outline:2px solid red;}有requried的属性添加边框 input:optional{}为没有requried… input[type=’email’]:invalid{} :read-only有readonly, :read-write没有readonly等]]></content>
+      <categories>
+        <category>CSS</category>
+      </categories>
+      <tags>
+        <tag>CSS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【SpringBoot】请求]]></title>
+    <url>%2Fblog%2F2019%2F04%2F18%2FspringbootHttp%2F</url>
+    <content type="text"><![CDATA[简单的Get请求1234567891011121314@PathVariable表示从路径中拿到参数并且一一对应@RestControllerpublic class GetController &#123; private Map&lt;String, Object&gt; params = new HashMap&lt;&gt;(); @RequestMapping(path = &quot;/&#123;city_id&#125;/&#123;user_id&#125;&quot;,method = RequestMethod.GET) public Object findUser(@PathVariable(&quot;city_id&quot;) String cityId, @PathVariable(&quot;user_id&quot;) String userId) &#123; params.clear(); params.put(&quot;cityId&quot;, cityId); params.put(&quot;userId&quot;, userId); return params; &#125;&#125; 省略方法的Get请求1234567@GetMapping(value = &quot;/v1/page_user1&quot;) public Object pageUser(int from, int size) &#123; params.clear(); params.put(&quot;from&quot;, from); params.put(&quot;size&quot;, size); return params; &#125; 有默认值的Get请求12345678910111213141516 在这里请求地址是localhost:8080/v2/page_user2?size=100&amp;page=1000 返回给前端的数据结构是 &#123; &quot;size&quot;: 100, &quot;from&quot;: 1000 &#125; 1)在这里默认给page如果没有传值的时候给0 2)page是对外需要传的参数，映射到from里面去@GetMapping(value=&quot;v2/page_user2&quot;) public Object pageUserV2(@RequestParam(defaultValue = &quot;0&quot;, name = &quot;page&quot;,required = true) int from, int size) &#123; params.clear(); params.put(&quot;from&quot;, from); params.put(&quot;size&quot;, size); return params; &#125; 通过bean对象传参POST123456789101112postman中选择Post，body,JSON(application/json) /** * 使用bean对象传参 * 需要指定http头为 content-type为application/json * @param user */ @RequestMapping(&quot;/v3/save_user&quot;) public Object saveUser(@RequestBody User user) &#123; params.clear(); params.put(&quot;user&quot;, user); return params; &#125; 获取Http头信息12345678// 在postman中提交时，参数headers里面给access_token的值 @GetMapping(&quot;/v1/get_header&quot;) public Object getHeader(@RequestHeader(&quot;access_token&quot;) String accessToken, String id) &#123; params.clear(); params.put(&quot;access_token&quot;, accessToken); params.put(&quot;id&quot;, id); return params; &#125; 使用HttpServletRequest来请求1234567@GetMapping(&quot;v1/test_request&quot;) public Object testRequest(HttpServletRequest request) &#123; params.clear(); String id = request.getParameter(&quot;id&quot;); params.put(&quot;id&quot;, id); return params; &#125; Post请求1234567@PostMapping(&quot;v1/test_post&quot;) public Object testPost(String id, String name) &#123; params.clear(); params.put(&quot;id&quot;, id); params.put(&quot;name&quot;, name); return params; &#125;]]></content>
+      <categories>
+        <category>Java</category>
+        <category>SpringBoot</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>SpringBoot</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【HTML】结构化元素]]></title>
+    <url>%2Fblog%2F2019%2F04%2F18%2FHTMLelement%2F</url>
+    <content type="text"><![CDATA[section参考文章1参考文章2]]></content>
+      <categories>
+        <category>HTML</category>
+      </categories>
+      <tags>
+        <tag>HTML</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Angular】Http]]></title>
+    <url>%2Fblog%2F2019%2F04%2F18%2FngHttp%2F</url>
+    <content type="text"><![CDATA[跳过拦截器方法一1234567891011121314import &#123; Injectable &#125; from &apos;@angular/core&apos;;import &#123; HttpClient, HttpBackend &#125; from &apos;@angular/common/http&apos;;@Injectable()export class AnonymousRequestService &#123; // 注入 HttpBackend constructor(private httpBackend: HttpBackend) &#123; &#125; requestByNewHttpClient() &#123; // 建立新的 HttpClient const newHttpClient = new HttpClient(this.httpBackend); return this.httpClient.get(&apos;https://jsonplaceholder.typicode.com/todos/3&apos;); &#125;&#125; 方法二123456789101112131415161718请求时this.httpClient.get( &apos;https://jsonplaceholder.typicode.com/todos/2&apos;, // 添加 Anonymous 的 header &#123; headers: &#123; &apos;Anonymous&apos;: &apos;&apos; &#125; &#125;);在拦截器中public intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; &#123; // 如果 header 被加料過，把它移除，並不進行原本要處理的行為 if (req.headers.get(&apos;Anonymous&apos;) !== undefined) &#123; const newHeaders = req.headers.delete(&apos;Anonymous&apos;) const newRequest = req.clone(&#123; headers: newHeaders &#125;); return next.handle(newRequest); &#125; else &#123; const newRequest = req.clone(&#123; setHeaders: &#123; &apos;Authorization&apos;: &apos;Bearer fakeToken&apos; &#125; &#125;); return next.handle(newRequest); &#125;&#125;]]></content>
+      <categories>
+        <category>Angular</category>
+        <category>Angular小知识</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+        <tag>Angular小知识</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【SpringBoot】注解]]></title>
+    <url>%2Fblog%2F2019%2F04%2F17%2FspringBootAnnotation%2F</url>
+    <content type="text"><![CDATA[启动注解@SpringBootApplication @ResponseBody(这个注解表示把结果以json返回) @RestController=@Controller+@ResponseBody]]></content>
+      <categories>
+        <category>Java</category>
+        <category>SpringBoot</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>SpringBoot</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Rxjs】小例子收集]]></title>
+    <url>%2Fblog%2F2019%2F04%2F17%2FngRxjsDemo%2F</url>
+    <content type="text"><![CDATA[时间每秒显示1234567time = new Observable(observer =&gt; &#123; setInterval(() =&gt; &#123; observer.next(new Date().toString()); &#125;, 1000);&#125;);// 模板中&#123;&#123; time | async &#125;&#125;]]></content>
+      <categories>
+        <category>Angular</category>
+        <category>Rxjs</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+        <tag>Rxjs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Angular表单】]]></title>
+    <url>%2Fblog%2F2019%2F04%2F17%2FngForm%2F</url>
+    <content type="text"><![CDATA[表单验证器执行时机默认情况下，每当表单值变化之后，都会执行所有验证器。对于同步验证器，没有什么会显著影响应用性能的地方。不过，异步验证器通常会执行某种 HTTP 请求来对控件进行验证。如果在每次按键之后都发出 HTTP 请求会给后端 API 带来沉重的负担，应该尽量避免。 我们可以把 updateOn 属性从 change（默认值）改成 submit 或 blur 来推迟表单验证的更新时机。对于模板驱动表单：1&lt;input [(ngModel)]=&quot;name&quot; [ngModelOptions]=&quot;&#123;updateOn: &apos;blur&apos;&#125;&quot;&gt; 对于响应式表单1new FormControl(&apos;&apos;, &#123;updateOn: &apos;blur&apos;&#125;);]]></content>
+      <categories>
+        <category>Angular</category>
+        <category>Angular表单</category>
+        <category>小知识</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Angular】管道]]></title>
+    <url>%2Fblog%2F2019%2F04%2F16%2FngPipe%2F</url>
+    <content type="text"><![CDATA[日期1&#123;&#123; birthday | date:"yyyy-MM-dd HH:mm:ss" &#125;&#125; 链式管道1&#123;&#123; birthday | date:'fullDate' | uppercase&#125;&#125;]]></content>
+      <categories>
+        <category>Angular</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[特殊的类]]></title>
+    <url>%2Fblog%2F2019%2F04%2F15%2FngSpecialClass%2F</url>
+    <content type="text"><![CDATA[特殊的类指令中用来获取对容器视图的访问权。12345678import &#123; Directive, ViewContainerRef &#125; from '@angular/core';@Directive(&#123; selector: '[ad-host]',&#125;)export class AdDirective &#123; constructor(public viewContainerRef: ViewContainerRef) &#123; &#125;&#125; 正则表达式类1nameRe: RegExp]]></content>
+      <categories>
+        <category>Angular</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Angular小知识】]]></title>
+    <url>%2Fblog%2F2019%2F04%2F15%2FngLittleKnowledge%2F</url>
+    <content type="text"><![CDATA[使用get和set截听输入属性的变化typescript中存取器写法1234567891011121314151617class Person &#123; constructor() &#123; &#125; private _name: string; public get name() &#123; return this._name; &#125; public set name(name: string) &#123; this._name = name; &#125;&#125;let person = new Person();// person._name = "apple"; // 无法访问到_name变量person.name = "apple";console.log(person.name); // 输出 apple Angular中写法1234567891011121314@Component(&#123; selector: 'app-name-child', template: '&lt;h3&gt;"&#123;&#123;name&#125;&#125;"&lt;/h3&gt;'&#125;)export class NameChildComponent &#123; private _name = ''; @Input() set name(name: string) &#123; this._name = (name &amp;&amp; name.trim()) || '&lt;no name set&gt;'; &#125; get name(): string &#123; return this._name; &#125;&#125; 在这里会将输入属性的name,trim调空格，并且把空值替换成默认字符串。]]></content>
+      <categories>
+        <category>Angular</category>
+        <category>Angular小知识</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+        <tag>Angular小知识</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[【Angular】事件]]></title>
     <url>%2Fblog%2F2019%2F04%2F11%2FngEvents%2F</url>
     <content type="text"><![CDATA[事件 (input) (click) (keyup) 敲击键盘时 (keyup.enter) 敲击回车时 (blur) 失去焦点时触发]]></content>
@@ -36,7 +294,7 @@
   <entry>
     <title><![CDATA[【Angular】性能优化]]></title>
     <url>%2Fblog%2F2019%2F04%2F07%2FngPerformanceFaster%2F</url>
-    <content type="text"><![CDATA[注册服务在根一级提供服务，Angular会创建一个单一，共享的实例，并且在 @Injectable 元数据中注册提供商的方式还让 Angular 能够通过移除那些从未被用过的服务来优化大小。123@Injectable(&#123; providedIn: 'root',&#125;) 模版表达式应该快速结束Angular在每个变更检测周期结束后执行模版表达式。变更检测周期会被多种异步活动触发，如Promise解析，Http返回结果，定时器时间，按键或鼠标移动等。所以模版表达式应该快速结束。 隐藏元素123456789&lt;!-- isSpecial is true --&gt;&lt;div [class.hidden]="!isSpecial"&gt;Show with class&lt;/div&gt;&lt;div [class.hidden]="isSpecial"&gt;Hide with class&lt;/div&gt;&lt;!-- HeroDetail is in the DOM but hidden --&gt;&lt;app-hero-detail [class.hidden]="isSpecial"&gt;&lt;/app-hero-detail&gt;&lt;div [style.display]="isSpecial ? 'block' : 'none'"&gt;Show with style&lt;/div&gt;&lt;div [style.display]="isSpecial ? 'none' : 'block'"&gt;Hide with style&lt;/div&gt; 如果通过以上代码来隐藏元素，子树中的组件及其状态仍然保留着。即使对于不可见属性，Angular也会继续变更检测。子树可能占有相当可观的内存和运算资源。应该使用ngIf来代替 *ngForngFor有时候性能较差，特别是在大型列表中。 对一个条目的一丁点改动、移除或添加，都会导致级联的 DOM 操作。 我们应该使用trackBy，往组件中添加一个方法，它会返回 NgFor应该追踪的值1234567// ts中trackByHeroes(index: number, hero: Hero): number &#123; return hero.id; &#125;//html中&lt;div *ngFor="let hero of heroes; trackBy: trackByHeroes"&gt; (&#123;&#123;hero.id&#125;&#125;) &#123;&#123;hero.name&#125;&#125;&lt;/div&gt; 如果没有 trackBy，这些列在改变引用时都会触发完全的 DOM 元素替换。 有了 trackBy，则只有修改了 id 的列才会触发元素替换]]></content>
+    <content type="text"><![CDATA[注册服务在根一级提供服务，Angular会创建一个单一，共享的实例，并且在 @Injectable 元数据中注册提供商的方式还让 Angular 能够通过移除那些从未被用过的服务来优化大小。123@Injectable(&#123; providedIn: 'root',&#125;) 模版表达式应该快速结束Angular在每个变更检测周期结束后执行模版表达式。变更检测周期会被多种异步活动触发，如Promise解析，Http返回结果，定时器时间，按键或鼠标移动等。所以模版表达式应该快速结束。 隐藏元素123456789&lt;!-- isSpecial is true --&gt;&lt;div [class.hidden]="!isSpecial"&gt;Show with class&lt;/div&gt;&lt;div [class.hidden]="isSpecial"&gt;Hide with class&lt;/div&gt;&lt;!-- HeroDetail is in the DOM but hidden --&gt;&lt;app-hero-detail [class.hidden]="isSpecial"&gt;&lt;/app-hero-detail&gt;&lt;div [style.display]="isSpecial ? 'block' : 'none'"&gt;Show with style&lt;/div&gt;&lt;div [style.display]="isSpecial ? 'none' : 'block'"&gt;Hide with style&lt;/div&gt; 如果通过以上代码来隐藏元素，子树中的组件及其状态仍然保留着。即使对于不可见属性，Angular也会继续变更检测。子树可能占有相当可观的内存和运算资源。应该使用ngIf来代替 *ngForngFor有时候性能较差，特别是在大型列表中。 对一个条目的一丁点改动、移除或添加，都会导致级联的 DOM 操作。 我们应该使用trackBy，往组件中添加一个方法，它会返回 NgFor应该追踪的值1234567// ts中trackByHeroes(index: number, hero: Hero): number &#123; return hero.id; &#125;//html中&lt;div *ngFor="let hero of heroes; trackBy: trackByHeroes"&gt; (&#123;&#123;hero.id&#125;&#125;) &#123;&#123;hero.name&#125;&#125;&lt;/div&gt; 如果没有 trackBy，这些列在改变引用时都会触发完全的 DOM 元素替换。 有了 trackBy，则只有修改了 id 的列才会触发元素替换 表单异步验证器优化默认情况下，每当表单值变化之后，都会执行所有验证器。对于同步验证器，没有什么会显著影响应用性能的地方。不过，异步验证器通常会执行某种 HTTP 请求来对控件进行验证。如果在每次按键之后都发出 HTTP 请求会给后端 API 带来沉重的负担，应该尽量避免。 我们可以把 updateOn 属性从 change（默认值）改成 submit 或 blur 来推迟表单验证的更新时机。对于模板驱动表单：1&lt;input [(ngModel)]=&quot;name&quot; [ngModelOptions]=&quot;&#123;updateOn: &apos;blur&apos;&#125;&quot;&gt; 对于响应式表单1new FormControl(&apos;&apos;, &#123;updateOn: &apos;blur&apos;&#125;);]]></content>
       <categories>
         <category>Angular</category>
       </categories>
